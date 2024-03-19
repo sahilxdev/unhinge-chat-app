@@ -10,7 +10,8 @@ import {Container,
   } from '@mui/material'
 import { CameraAlt as CameraAltIcon } from "@mui/icons-material";
 import { VisuallyHiddenInput } from '../components/styles/StyledComponents';
-import { useInputValidation } from "6pp";
+import { useFileHandler, useInputValidation } from "6pp";
+import { usernameValidator } from '../utils/validators';
 
 const Login = () => {
 
@@ -20,11 +21,27 @@ const Login = () => {
 
   const name = useInputValidation("")
   const bio = useInputValidation("")
-  const username = useInputValidation("")
+  const username = useInputValidation("", usernameValidator)
   const password = useInputValidation("")
 
+  const avatar = useFileHandler("single")
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+  };
+
+  const handleSignUp = (e) => {
+    e.preventDefault();
+  };
+
   return (
-    <Container component={"main"} maxWidth="xs" sx={{
+    <div
+      style={{
+        backgroundImage:
+          "linear-gradient(rgba(238, 16, 16, 0.5), rgba(85, 191, 255, 0.5))"
+      }}
+    >
+      <Container component={"main"} maxWidth="xs" sx={{
       height:"100vh",
       display: "flex",
       justifyContent: "center",
@@ -71,6 +88,7 @@ const Login = () => {
             color="primary" 
             type='submit'
             fullWidth
+            onSubmit={handleLogin}
             >
               Login
             </Button>
@@ -98,14 +116,20 @@ const Login = () => {
             <form style={{
               width: "100%",
               marginTop: "1rem"
-            }} >
+            }} 
+            onSubmit={handleSignUp}
+            >
 
               <Stack position={"relative"} width={"10rem"} margin={"auto"} >
                 <Avatar sx={{ 
                   width: "10rem",
                   height: "10rem",
                   objectFit: "contain"
-                 }} />
+                 }}
+                 src={avatar.preview} 
+                 />
+
+                
 
                  <IconButton
                  sx={{
@@ -122,11 +146,23 @@ const Login = () => {
                  >
                   <>
                     <CameraAltIcon />
-                    <VisuallyHiddenInput type='file' />
+                    <VisuallyHiddenInput type='file' onChange={avatar.changeHandler} />
                   </>
                  </IconButton>
 
               </Stack>
+
+              {
+                avatar.error && (
+                  <Typography 
+                  m={"1rem"} 
+                  width={"fit-content"}
+                  display={"block"}
+                  color="error" 
+                  variant='caption' >
+                    {avatar.error}
+                  </Typography>
+                )}
 
               <TextField 
               required 
@@ -157,6 +193,14 @@ const Login = () => {
               value={username.value}
               onChange={username.changeHandler}
               />
+
+              {
+                username.error && (
+                  <Typography color="error" variant='caption' >
+                    {username.error}
+                  </Typography>
+                )
+              }
   
               <TextField 
               required 
@@ -168,6 +212,7 @@ const Login = () => {
               value={password.value}
               onChange={password.changeHandler}
               />
+
   
               <Button 
               sx = {{
@@ -203,6 +248,7 @@ const Login = () => {
       
         </Paper>
     </Container>
+    </div>
   );
 };
 
